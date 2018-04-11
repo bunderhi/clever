@@ -31,7 +31,7 @@ get_image() {
 
 resize_fs() {
 
-  # STATIC
+  # STATIC FUNCTION
   # TEMPLATE: resize_fs $SIZE $WORKSPACE $IMAGE_NAME
 
   # Partitions numbers
@@ -81,7 +81,7 @@ resize_fs() {
 
 publish_image_python() {
 
-# STATIC
+# STATIC FUNCTION
 # TEMPLATE: publish_image_python $WORKSPACE $IMAGE_NAME $WORKSPACE $CONFIG_FILE $RELEASE_ID $RELEASE_BODY
 
 # https://developer.github.com/v3/repos/releases/
@@ -99,7 +99,7 @@ publish_image_python() {
 
 publish_image_bash() {
 
-# STATIC
+# STATIC FUNCTION
 # TEMPLATE: publish_image_bash $WORKSPACE $IMAGE_NAME $WORKSPACE $CONFIG_FILE $RELEASE_ID $RELEASE_BODY
 
 # https://developer.github.com/v3/repos/releases/
@@ -117,7 +117,7 @@ publish_image_bash() {
 
 burn_image() {
 
-# STATIC
+# STATIC FUNCTION
 # TEMPLATE: burn_image $IMAGE_PATH $MICROSD_DEV
 
   echo "\033[0;31m\033[1mBurn image\033[0m\033[0m" \
@@ -127,7 +127,7 @@ burn_image() {
 
 burn_and_reboot() {
 
-# STATIC
+# STATIC FUNCTION
 # TEMPLATE: burn_and_reboot $IMAGE_PATH $MICROSD_DEV
 
   burn_image $1 $2 \
@@ -150,7 +150,7 @@ mount_system() {
   # --show : печатает имя устройства, например /dev/loop4
 
   echo "\033[0;31m\033[1mMount loop-image: $1\033[0m\033[0m"
-  DEV_IMAGE=$(losetup -Pf $1 --show)
+  local DEV_IMAGE=$(losetup -Pf $1 --show)
   sleep 0.5
 
   echo "\033[0;31m\033[1mMount dirs $2 & $2/boot\033[0m\033[0m"
@@ -184,7 +184,6 @@ mount_system() {
   # mount -t devpts none "$2/dev/pts" -o ptmxmode=0666,newinstance
   # ln -fs "pts/ptmx" "$2/dev/ptmx"
   echo "OK"
-
 
   # mount -o bind /dev $2/dev
   # mount -t proc proc $2/proc
@@ -234,7 +233,7 @@ execute() {
   fi
   mount -t proc -o nosuid,noexec,nodev proc $2/proc
   echo "OK"
-  
+
   echo "Mounting /sys in chroot... "
   if [ ! -d $2/sys ] ; then
     mkdir -p $2/sys
@@ -242,7 +241,7 @@ execute() {
   fi
   mount -t sysfs -o nosuid,noexec,nodev sysfs $2/sys
   echo "OK"
-  
+
   echo "Mounting /dev/ and /dev/pts in chroot... "
   mkdir -p -m 755 $2/dev/pts
   mount -t devtmpfs -o mode=0755,nosuid devtmpfs $2/dev
@@ -273,10 +272,6 @@ umount_system() {
   # STATIC FUNCTION
   # TEMPLATE: umount_system $MOUNT_POINT $DEV_IMAGE
 
-  #if [[ $# > 1 ]]
-  #then DEV_IMAGE=$2
-  #fi
-  
   echo "\033[0;31m\033[1m$(date) | Umount recursive dirs: $1\033[0m\033[0m"
   # There is a risk that umount will fail
   set +e
@@ -333,7 +328,6 @@ EOF
 
 configure_system() {
 
-  # STATIC
   # TEMPLATE: configure_system $IMAGE $MOUNT_POINT $ROOT_PARTITON $BOOT_PARTITION
 
   local BLACKLIST=/etc/modprobe.d/raspi-blacklist.conf
@@ -411,7 +405,7 @@ configure_system() {
 
 prepare_fs() {
 
-  # STATIC
+  # STATIC FUNCTION
   # TEMPLATE: prepare_fs $IMAGE $SIZE
 
   date
@@ -427,11 +421,11 @@ prepare_fs() {
 
 install_docker() {
 
-  # STATIC
+  # STATIC FUNCTION
   # TEMPLATE: install_docker $IMAGE $MOUNT_POINT $DEV_ROOTFS $DEV_BOOT
 
   # https://askubuntu.com/questions/485567/unexpected-end-of-file
-  mount_system $1 $2 $3 $4 << EOF
+  mount_system $1 $2 << EOF
 #!/bin/bash
 # https://www.raspberrypi.org/blog/docker-comes-to-raspberry-pi/
 curl -sSL https://get.docker.com | sh
@@ -441,15 +435,14 @@ service docker start
 docker pull smirart/rpi-ros:sshd
 docker run -di --restart unless-stopped -p 192.168.0.121:2202:22 -t smirart/rpi-ros:sshd
 EOF
-  umount_system $2
 }
 
 test_docker() {
 
-  # STATIC
-  # TEMPLATE: test_docker $IMAGE $MOUNT_POINT $DEV_ROOTFS $DEV_BOOT
+  # STATIC FUNCTION
+  # TEMPLATE: test_docker $IMAGE $MOUNT_POINT
 
-  mount_system $1 $2 $3 $4 << EOF
+  mount_system $1 $2 << EOF
 #!/bin/bash
 # https://www.raspberrypi.org/blog/docker-comes-to-raspberry-pi/
 service docker start
@@ -457,7 +450,6 @@ sleep 1
 docker images
 docker ps -a
 EOF
-  umount_system $2
 }
 
 # очистить history
@@ -471,15 +463,6 @@ EOF
 # docker in chroot
 # service docker start
 # https://forums.docker.com/t/cannot-connect-to-the-docker-daemon-is-the-docker-daemon-running-on-this-host/8925/17
-
-
-test() {
-
-  mount_system 2018-03-13-raspbian-stretch-lite.img /mnt << EOF
-#!/bin/bash
-echo "dsadfasfasfasfasf"
-EOF
-}
 
 
 if [ $(whoami) != "root" ];
@@ -524,9 +507,6 @@ case "$1" in
 
   execute) # execute $IMAGE $MOUNT_POINT $EXECUTE_FILE ...
     execute $2 $3 $4 ${@:5};;
-
-  test)
-    test;;
 
   *)
     echo "Enter one of: mount_system, get_image, resize_fs, publish_image, execute";;
