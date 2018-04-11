@@ -498,7 +498,7 @@ echo "\$7: $7"
 case "$1" in
   mount_system) # mount_system $IMAGE $MOUNT_POINT
     mount_system $2 $3;
-    umount_system $3;;
+    umount_system $3 $DEV_IMAGE;;
 
   get_image) # get_image $WORKSPACE $RPI_DONWLOAD_URL $IMAGE_NAME
     get_image $2 $3 $4;;
