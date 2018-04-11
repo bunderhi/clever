@@ -4,7 +4,7 @@ pipeline {
     string(name: 'IMAGE_NAME', defaultValue: 'clever_noname.img', description: 'Output image file name')
     string(name: 'IMAGE_VERSION', defaultValue: 'No version', description: 'Image version')
 
-    string(name: 'WORKSPACE', defaultValue: '/mnt/hdd_builder/workspace', description: 'Workspace')
+    string(name: 'BUILD_DIR', defaultValue: '/mnt/hdd_builder/workspace', description: 'Build workspace')
     string(name: 'MOUNT_POINT', defaultValue: '/mnt/hdd_builder/image', description: 'Mount point')
 
     string(name: 'RPI_DONWLOAD_URL', defaultValue: 'https://downloads.raspberrypi.org/raspbian_lite/images/raspbian_lite-2017-12-01/2017-11-29-raspbian-stretch-lite.zip')
@@ -18,7 +18,7 @@ pipeline {
   stages {
     stage('Get image') {
       steps {
-        sh "${params.WORKSPACE}/image/image_config.sh get_image ${params.WORKSPACE} ${params.RPI_DONWLOAD_URL} ${params.IMAGE_NAME}"
+        sh "$WORKSPACE/image/image_config.sh get_image ${params.BUILD_DIR} ${params.RPI_DONWLOAD_URL} ${params.IMAGE_NAME}"
       }
     }
     stage('Resize FS') {
@@ -26,7 +26,7 @@ pipeline {
         SIZE = '8G'
       }
       steps {
-        sh "${params.WORKSPACE}/image/image_config.sh resize_fs $SIZE ${params.WORKSPACE} ${params.IMAGE_NAME}"
+        sh "$WORKSPACE/image/image_config.sh resize_fs $SIZE ${params.BUILD_DIR} ${params.IMAGE_NAME}"
       }
     }
     stage('Configure interfaces') {
@@ -34,7 +34,7 @@ pipeline {
         EXECUTE_FILE = 'iface.sh'
       }
       steps {
-        sh "${params.WORKSPACE}/image/image_config.sh execute ${params.WORKSPACE}/${params.IMAGE_NAME} ${params.MOUNT_POINT} ${params.WORKSPACE}/image/$EXECUTE_FILE"
+        sh "$WORKSPACE/image/image_config.sh execute ${params.BUILD_DIR}/${params.IMAGE_NAME} ${params.MOUNT_POINT} $WORKSPACE/image/$EXECUTE_FILE"
       }
     }
     stage('Initialize image') {
@@ -43,7 +43,7 @@ pipeline {
       }
       // TODO: Transfer apps.sh initialisation code here
       steps {
-        sh "${params.WORKSPACE}/image/image_config.sh execute ${params.WORKSPACE}/${params.IMAGE_NAME} ${params.MOUNT_POINT} ${params.WORKSPACE}/image/$EXECUTE_FILE ${params.IMAGE_VERSION} $(basename ${params.RPI_ZIP_NAME})"
+        sh "$WORKSPACE/image/image_config.sh execute ${params.BUILD_DIR}/${params.IMAGE_NAME} ${params.MOUNT_POINT} $WORKSPACE/image/$EXECUTE_FILE ${params.IMAGE_VERSION} $(basename ${params.RPI_ZIP_NAME})"
       }
     }
     stage('Install Apps') {
@@ -51,7 +51,7 @@ pipeline {
         EXECUTE_FILE = 'apps.sh'
       }
       steps {
-        sh "${params.WORKSPACE}/image/image_config.sh execute ${params.WORKSPACE}/${params.IMAGE_NAME} ${params.MOUNT_POINT} ${params.WORKSPACE}/image/$EXECUTE_FILE"
+        sh "$WORKSPACE/image/image_config.sh execute ${params.BUILD_DIR}/${params.IMAGE_NAME} ${params.MOUNT_POINT} $WORKSPACE/image/$EXECUTE_FILE"
       }
     }
     stage('Install ROS') {
@@ -59,7 +59,7 @@ pipeline {
         EXECUTE_FILE = 'ros.sh'
       }
       steps {
-        sh "${params.WORKSPACE}/image/image_config.sh execute ${params.WORKSPACE}/${params.IMAGE_NAME} ${params.MOUNT_POINT} ${params.WORKSPACE}/image/$EXECUTE_FILE"
+        sh "$WORKSPACE/image/image_config.sh execute ${params.BUILD_DIR}/${params.IMAGE_NAME} ${params.MOUNT_POINT} $WORKSPACE/image/$EXECUTE_FILE"
       }
     }
     // TODO: Add finalising step, transfer mirror removal from ros.sh

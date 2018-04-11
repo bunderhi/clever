@@ -12,7 +12,7 @@ set -e
 get_image() {
 
 # STATIC FUNCTION
-# TEMPLATE: get_image $WORKSPACE $RPI_DONWLOAD_URL $IMAGE_NAME
+# TEMPLATE: get_image $BUILD_DIR $RPI_DONWLOAD_URL $IMAGE_NAME
 
   local RPI_ZIP_NAME=$(basename $2)
   if [ ! -e "$RPI_ZIP_NAME" ];
@@ -32,7 +32,7 @@ get_image() {
 resize_fs() {
 
   # STATIC FUNCTION
-  # TEMPLATE: resize_fs $SIZE $WORKSPACE $IMAGE_NAME
+  # TEMPLATE: resize_fs $SIZE $BUILD_DIR $IMAGE_NAME
 
   # Partitions numbers
   local BOOT_PARTITION=1
