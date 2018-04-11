@@ -205,6 +205,8 @@ mount_system() {
   # http://help.ubuntu.ru/wiki/%D0%B2%D0%BE%D1%81%D1%81%D1%82%D0%B0%D0%BD%D0%BE%D0%B2%D0%BB%D0%B5%D0%BD%D0%B8%D0%B5_grub
   echo "\033[0;31m\033[1mEnter chroot\033[0m\033[0m"
   chroot $2 /bin/bash
+
+  umount_system $2 $DEV_IMAGE
 }
 
 execute() {
@@ -471,6 +473,15 @@ EOF
 # https://forums.docker.com/t/cannot-connect-to-the-docker-daemon-is-the-docker-daemon-running-on-this-host/8925/17
 
 
+test() {
+
+  mount_system 2018-03-13-raspbian-stretch-lite.img /mnt << EOF
+#!/bin/bash
+echo "dsadfasfasfasfasf"
+EOF
+}
+
+
 if [ $(whoami) != "root" ];
 then echo "" \
   && echo "********************************************************************" \
@@ -514,6 +525,9 @@ case "$1" in
 
   execute) # execute $IMAGE $MOUNT_POINT $EXECUTE_FILE ...
     execute $2 $3 $4 ${@:5};;
+
+  test)
+    test;;
 
   *)
     echo "Enter one of: mount_system, get_image, resize_fs, publish_image, execute";;
