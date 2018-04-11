@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/sh
 
 # Exit immidiately on non-zero result
 set -e
@@ -82,7 +82,7 @@ resize_fs() {
 publish_image_python() {
 
 # STATIC FUNCTION
-# TEMPLATE: publish_image_python $WORKSPACE $IMAGE_NAME $WORKSPACE $CONFIG_FILE $RELEASE_ID $RELEASE_BODY
+# TEMPLATE: publish_image_python $BUILD_DIR $IMAGE_NAME $WORKSPACE $CONFIG_FILE $RELEASE_ID $RELEASE_BODY
 
 # https://developer.github.com/v3/repos/releases/
 #RELEASE_BODY="### Changelog\n* Add /boot/cmdline.txt net.ifnames=0 https://www.freedesktop.org/wiki/Software/systemd/PredictableNetworkInterfaceNames/\n* Updated cophelper\n* Installed copstat"
@@ -100,7 +100,7 @@ publish_image_python() {
 publish_image_bash() {
 
 # STATIC FUNCTION
-# TEMPLATE: publish_image_bash $WORKSPACE $IMAGE_NAME $WORKSPACE $CONFIG_FILE $RELEASE_ID $RELEASE_BODY
+# TEMPLATE: publish_image_bash $BUILD_DIR $IMAGE_NAME $WORKSPACE $CONFIG_FILE $RELEASE_ID $RELEASE_BODY
 
 # https://developer.github.com/v3/repos/releases/
 #RELEASE_BODY="### Changelog\n* Add /boot/cmdline.txt net.ifnames=0 https://www.freedesktop.org/wiki/Software/systemd/PredictableNetworkInterfaceNames/\n* Updated cophelper\n* Installed copstat"
@@ -493,16 +493,16 @@ case "$1" in
   mount_system) # mount_system $IMAGE $MOUNT_POINT
     mount_system $2 $3;;
 
-  get_image) # get_image $WORKSPACE $RPI_DONWLOAD_URL $IMAGE_NAME
+  get_image) # get_image $BUILD_DIR $RPI_DONWLOAD_URL $IMAGE_NAME
     get_image $2 $3 $4;;
 
-  resize_fs) # resize_fs $SIZE $WORKSPACE $IMAGE_NAME
+  resize_fs) # resize_fs $SIZE $BUILD_DIR $IMAGE_NAME
     resize_fs $2 $3 $4 $5;;
 
-  publish_image) # publish_image_python $WORKSPACE $IMAGE_NAME $WORKSPACE $CONFIG_FILE $RELEASE_ID $RELEASE_BODY
+  publish_image) # publish_image_python $BUILD_DIR $IMAGE_NAME $WORKSPACE $CONFIG_FILE $RELEASE_ID $RELEASE_BODY
     publish_image_python $2 $3 $4 $5 $6 $7;;
 
-  publish_image_bash) # publish_image_bash $WORKSPACE $IMAGE_NAME $WORKSPACE $CONFIG_FILE $RELEASE_ID $RELEASE_BODY
+  publish_image_bash) # publish_image_bash $BUILD_DIR $IMAGE_NAME $WORKSPACE $CONFIG_FILE $RELEASE_ID $RELEASE_BODY
     publish_image_bash $2 $3 $4 $5 $6 $7;;
 
   execute) # execute $IMAGE $MOUNT_POINT $EXECUTE_FILE ...

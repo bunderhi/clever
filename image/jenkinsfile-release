@@ -9,10 +9,13 @@ pipeline {
     string(name: 'IMAGE_NAME', defaultValue: "${params.GWBT_REPO_NAME}_${params.GWBT_RELEASE_TAG_NAME}_${params.GWBT_RELEASE_PUBLISHED_AT}.img", description: 'IMAGE_NAME')
     //string(name: 'GWBT_TRIGGER', defaultValue: '', description: 'GWBT_TRIGGER')
     booleanParam(name: 'ONLY_PUBLISH', defaultValue: false, description: 'ONLY PUBLISH')
-    //string(name: 'WORKSPACE', defaultValue: '', description: 'WORKSPACE')
+
+    string(name: 'WORKSPACE', defaultValue: '/mnt/hdd_builder/workspace', description: 'Workspace')
   }
   environment {
-    BUILD_DIRECTORY = '/home/pi/temp'
+    DEBIAN_FRONTEND = 'noninteractive'
+    LANG = 'C.UTF-8'
+    LC_ALL = 'C.UTF-8'
   }
   stages {
     stage('Build image') {
@@ -28,7 +31,7 @@ pipeline {
         CONFIG_FILE = 'coex-ci.conf'
       }
       steps {
-        sh "$WORKSPACE/image/image-config.sh publish_image $BUILD_DIRECTORY ${params.IMAGE_NAME} $WORKSPACE $CONFIG_FILE ${params.GWBT_RELEASE_ID} ${params.GWBT_RELEASE_BODY}"
+        sh "$WORKSPACE/image/image_config.sh publish_image ${params.WORKSPACE}/${params.IMAGE_NAME} ${params.WORKSPACE}/$CONFIG_FILE ${params.GWBT_RELEASE_ID} ${params.GWBT_RELEASE_BODY}"
       }
     }
   }
