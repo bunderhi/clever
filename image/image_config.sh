@@ -34,7 +34,7 @@ resize_fs() {
   # STATIC
   # TEMPLATE: resize_fs $SIZE $WORKSPACE $IMAGE_NAME
 
-  // Partitions numbers
+  # Partitions numbers
   local BOOT_PARTITION=1
   local ROOT_PARTITION=2
 
@@ -139,7 +139,7 @@ mount_system() {
   # STATIC FUNCTION
   # TEMPLATE: mount_system $IMAGE $MOUNT_POINT
 
-  // Partitions numbers
+  # Partitions numbers
   local BOOT_PARTITION=1
   local ROOT_PARTITION=2
 
@@ -212,7 +212,7 @@ execute() {
   # STATIC FUNCTION
   # TEMPLATE: execute $IMAGE $MOUNT_POINT $EXECUTE_FILE ...
 
-  // Partitions numbers
+  # Partitions numbers
   local BOOT_PARTITION=1
   local ROOT_PARTITION=2
 
@@ -337,7 +337,7 @@ configure_system() {
   local BLACKLIST=/etc/modprobe.d/raspi-blacklist.conf
   local CONFIG=/boot/config.txt
 
-  // Partitions numbers
+  # Partitions numbers
   local BOOT_PARTITION=1
   local ROOT_PARTITION=2
 
@@ -516,5 +516,5 @@ case "$1" in
     execute $2 $3 $4 ${@:5};;
 
   *)
-    echo "Enter one of: enter, get_image, resize_fs, publish_image, execute";;
+    echo "Enter one of: mount_system, get_image, resize_fs, publish_image, execute";;
 esac
