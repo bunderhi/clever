@@ -43,8 +43,8 @@ pipeline {
       }
       // TODO: Transfer apps.sh initialisation code here
       steps {
-        sh "echo \$(basename ${params.RPI_DONWLOAD_URL})"
-        //sh "$WORKSPACE/image/image_config.sh execute ${params.BUILD_DIR}/${params.IMAGE_NAME} ${params.MOUNT_POINT} $WORKSPACE/image/$EXECUTE_FILE ${params.IMAGE_VERSION} \$(basename ${params.RPI_DONWLOAD_URL})"
+        //sh "echo \$(basename ${params.RPI_DONWLOAD_URL})"
+        sh "$WORKSPACE/image/image_config.sh execute ${params.BUILD_DIR}/${params.IMAGE_NAME} ${params.MOUNT_POINT} $WORKSPACE/image/$EXECUTE_FILE ${params.IMAGE_VERSION}"
       }
     }
     stage('Install Apps') {
