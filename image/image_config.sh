@@ -15,7 +15,7 @@ get_image() {
 # TEMPLATE: get_image $BUILD_DIR $RPI_DONWLOAD_URL $IMAGE_NAME
 
   local RPI_ZIP_NAME=$(basename $2)
-  if [ ! -e "$RPI_ZIP_NAME" ];
+  if [ ! -e "$1/$RPI_ZIP_NAME" ];
   then
     echo "$(date) | 1. Downloading original Linux distribution"
     wget -nv -O $1/$RPI_ZIP_NAME $2
