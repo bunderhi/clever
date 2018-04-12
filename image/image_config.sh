@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
 # Exit immidiately on non-zero result
 set -e
@@ -57,23 +57,23 @@ resize_fs() {
   # There is a risk that sfdisk will ask for a disk remount to update partition table
   # TODO: Check sfdisk exit code
 
-  echo "\033[0;31m\033[1mTruncate image\033[0m\033[0m" \
+  echo -e "\033[0;31m\033[1mTruncate image\033[0m\033[0m" \
     && truncate -s$1 $2/$3 \
     && echo "Mount loop-image: $2/$3" \
     && local DEV_IMAGE=$(losetup -Pf $2/$3 --show) \
     && sleep 0.5 \
-    && echo "\033[0;31m\033[1mMount loop-image: $1\033[0m\033[0m" \
+    && echo -e "\033[0;31m\033[1mMount loop-image: $1\033[0m\033[0m" \
     && echo ", +" | sfdisk -N 2 $DEV_IMAGE \
     && sleep 0.5 \
     && losetup -d $DEV_IMAGE \
     && sleep 0.5 \
     && local DEV_IMAGE=$(losetup -Pf $2/$3 --show) \
     && sleep 0.5 \
-    && echo "\033[0;31m\033[1mCheck & repair filesystem after expand partition\033[0m\033[0m" \
+    && echo -e "\033[0;31m\033[1mCheck & repair filesystem after expand partition\033[0m\033[0m" \
     && e2fsck -fvy "${DEV_IMAGE}p${ROOT_PARTITION}" \
-    && echo "\033[0;31m\033[1mExpand filesystem\033[0m\033[0m" \
+    && echo -e "\033[0;31m\033[1mExpand filesystem\033[0m\033[0m" \
     && resize2fs "${DEV_IMAGE}p${ROOT_PARTITION}" \
-    && echo "\033[0;31m\033[1mUmount loop-image\033[0m\033[0m" \
+    && echo -e "\033[0;31m\033[1mUmount loop-image\033[0m\033[0m" \
     && losetup -d $DEV_IMAGE
 
   set -e
@@ -120,9 +120,9 @@ burn_image() {
 # STATIC FUNCTION
 # TEMPLATE: burn_image $IMAGE_PATH $MICROSD_DEV
 
-  echo "\033[0;31m\033[1mBurn image\033[0m\033[0m" \
+  echo -e "\033[0;31m\033[1mBurn image\033[0m\033[0m" \
     && dd if=$1 of=$2 \
-    && echo "\033[0;31m\033[1mBurn image finished!\033[0m\033[0m"
+    && echo -e "\033[0;31m\033[1mBurn image finished!\033[0m\033[0m"
 }
 
 burn_and_reboot() {
@@ -149,17 +149,17 @@ mount_system() {
   #          например /dev/loop0p1 и /dev/loop0p2
   # --show : печатает имя устройства, например /dev/loop4
 
-  echo "\033[0;31m\033[1mMount loop-image: $1\033[0m\033[0m"
+  echo -e "\033[0;31m\033[1mMount loop-image: $1\033[0m\033[0m"
   local DEV_IMAGE=$(losetup -Pf $1 --show)
   sleep 0.5
 
-  echo "\033[0;31m\033[1mMount dirs $2 & $2/boot\033[0m\033[0m"
+  echo -e "\033[0;31m\033[1mMount dirs $2 & $2/boot\033[0m\033[0m"
   #mount $3 $2
   #mount $4 $2/boot
   mount "${DEV_IMAGE}p${ROOT_PARTITION}" $2
   mount "${DEV_IMAGE}p${BOOT_PARTITION}" $2/boot
 
-  echo "\033[0;31m\033[1mBind system dirs\033[0m\033[0m"
+  echo -e "\033[0;31m\033[1mBind system dirs\033[0m\033[0m"
   # https://github.com/debian-pi/raspbian-ua-netinst/issues/314
   echo "Mounting /proc in chroot... "
   if [ ! -d $2/proc ] ; then
@@ -193,7 +193,7 @@ mount_system() {
   # mount -t sysfs sys $2/sys
   # mount --bind /dev $2/dev
 
-  echo "\033[0;31m\033[1mCopy DNS records\033[0m\033[0m"
+  echo -e "\033[0;31m\033[1mCopy DNS records\033[0m\033[0m"
   cp -L /etc/resolv.conf $2/etc/resolv.conf
 
   # https://wiki.archlinux.org/index.php/Change_root_(%D0%A0%D1%83%D1%81%D1%81%D0%BA%D0%B8%D0%B9)
@@ -202,7 +202,7 @@ mount_system() {
   # https://losst.ru/vosstanovlenie-grub2
   # http://unixteam.ru/content/virtualizaciya-ili-zapuskaem-prilozhenie-v-chroot-okruzhenii-razmyshleniya
   # http://help.ubuntu.ru/wiki/%D0%B2%D0%BE%D1%81%D1%81%D1%82%D0%B0%D0%BD%D0%BE%D0%B2%D0%BB%D0%B5%D0%BD%D0%B8%D0%B5_grub
-  echo "\033[0;31m\033[1mEnter chroot\033[0m\033[0m"
+  echo -e "\033[0;31m\033[1mEnter chroot\033[0m\033[0m"
   chroot $2 /bin/bash
 
   umount_system $2 $DEV_IMAGE
@@ -217,15 +217,15 @@ execute() {
   local BOOT_PARTITION=1
   local ROOT_PARTITION=2
 
-  echo "\033[0;31m\033[1mMount loop-image: $1\033[0m\033[0m"
+  echo -e "\033[0;31m\033[1mMount loop-image: $1\033[0m\033[0m"
   local DEV_IMAGE=$(losetup -Pf $1 --show)
   sleep 0.5
 
-  echo "\033[0;31m\033[1mMount dirs $2 & $2/boot\033[0m\033[0m"
+  echo -e "\033[0;31m\033[1mMount dirs $2 & $2/boot\033[0m\033[0m"
   mount "${DEV_IMAGE}p${ROOT_PARTITION}" $2
   mount "${DEV_IMAGE}p${BOOT_PARTITION}" $2/boot
 
-  echo "\033[0;31m\033[1mBind system dirs\033[0m\033[0m"
+  echo -e "\033[0;31m\033[1mBind system dirs\033[0m\033[0m"
   echo "Mounting /proc in chroot... "
   if [ ! -d $2/proc ] ; then
     mkdir -p $2/proc
@@ -248,10 +248,10 @@ execute() {
   mount -t devpts -o gid=5,mode=620 devpts $2/dev/pts
   echo "OK"
 
-  echo "\033[0;31m\033[1mCopy DNS records\033[0m\033[0m"
+  echo -e "\033[0;31m\033[1mCopy DNS records\033[0m\033[0m"
   cp -L /etc/resolv.conf $2/etc/resolv.conf
 
-  echo "\033[0;31m\033[1m$(date) | Enter chroot\033[0m\033[0m"
+  echo -e "\033[0;31m\033[1m$(date) | Enter chroot\033[0m\033[0m"
   script_name=$(basename $3)
   script_path_root="$2/root/$script_name"
   # Copy script into chroot fs
@@ -272,7 +272,7 @@ umount_system() {
   # STATIC FUNCTION
   # TEMPLATE: umount_system $MOUNT_POINT $DEV_IMAGE
 
-  echo "\033[0;31m\033[1m$(date) | Umount recursive dirs: $1\033[0m\033[0m"
+  echo -e "\033[0;31m\033[1m$(date) | Umount recursive dirs: $1\033[0m\033[0m"
   # There is a risk that umount will fail
   set +e
   # Successfull unmount flag (false at thismoment)
@@ -285,21 +285,21 @@ umount_system() {
     # If no problems detected
     if [[ $? == 0 ]]
     then
-    echo "\033[0;31m\033[1m$(date) | Successfull unmount\033[0m\033[0m"
+    echo -e "\033[0;31m\033[1m$(date) | Successfull unmount\033[0m\033[0m"
     # Set flag
     umount_ok=true
     # Exit loop
     break
     fi
     # Unmount has failed
-    echo "\033[0;31m\033[1m$(date) | Unmount failed\033[0m\033[0m"
+    echo -e "\033[0;31m\033[1m$(date) | Unmount failed\033[0m\033[0m"
     # Wait for some time
     sleep 2
   done
   set -e
   # Jenkins job will fail if this condition is not true
   [[ "$umount_ok" == true ]]
-  echo "\033[0;31m\033[1m$(date) | Umount loop-image\033[0m\033[0m"
+  echo -e "\033[0;31m\033[1m$(date) | Umount loop-image\033[0m\033[0m"
   #losetup -d $DEV_IMAGE
   losetup -d $2
 }
@@ -352,25 +352,25 @@ configure_system() {
   # -P     : losetup монтирует разделы в образе как отдельные подразделы,
   #          например /dev/loop0p1 и /dev/loop0p2
   # --show : печатает имя устройства, например /dev/loop4
-  echo "\033[0;31m\033[1mMount loop-image: $1\033[0m\033[0m"
+  echo -e "\033[0;31m\033[1mMount loop-image: $1\033[0m\033[0m"
   DEV_IMAGE=$(losetup -Pf $1 --show)
   sleep 0.5
 
-  echo "\033[0;31m\033[1mMount dirs $2 & $2/boot\033[0m\033[0m"
+  echo -e "\033[0;31m\033[1mMount dirs $2 & $2/boot\033[0m\033[0m"
   mount ${DEV_IMAGE}p${ROOT_PARTITION} $2
   mount ${DEV_IMAGE}p${BOOT_PARTITION} $2/boot
 
   # 2. Изменить необходимые настройки
 
   #   2.1. Включить sshd
-  echo "\033[0;31m\033[1mTurn on sshd\033[0m\033[0m"
+  echo -e "\033[0;31m\033[1mTurn on sshd\033[0m\033[0m"
   touch $2/boot/ssh
 
   #   2.2. Включить GPIO
   # Включено по умолчанию
 
   #   2.3. Включить I2C
-  echo "\033[0;31m\033[1mTurn on I2C\033[0m\033[0m"
+  echo -e "\033[0;31m\033[1mTurn on I2C\033[0m\033[0m"
 
   set_config_var dtparam=i2c_arm on $CONFIG &&
     if ! [ -e $BLACKLIST ]; then
@@ -383,7 +383,7 @@ configure_system() {
     fi
 
   #   2.4. Включить SPI
-  echo "\033[0;31m\033[1mTurn on SPI\033[0m\033[0m"
+  echo -e "\033[0;31m\033[1mTurn on SPI\033[0m\033[0m"
 
   set_config_var dtparam=spi on $CONFIG &&
     if ! [ -e $BLACKLIST ]; then
