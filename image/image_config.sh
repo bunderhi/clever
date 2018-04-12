@@ -163,27 +163,27 @@ mount_system() {
   # https://github.com/debian-pi/raspbian-ua-netinst/issues/314
   echo "Mounting /proc in chroot... "
   if [ ! -d $2/proc ] ; then
-      mkdir -p $2/proc
-      echo "Created $2/proc"
+    mkdir -p $2/proc \
+      && echo "Created $2/proc"
   fi
-  mount -t proc -o nosuid,noexec,nodev proc $2/proc
-  echo "OK"
+  mount -t proc -o nosuid,noexec,nodev proc $2/proc \
+    && echo "OK"
   
   echo "Mounting /sys in chroot... "
   if [ ! -d $2/sys ] ; then
-      mkdir -p $2/sys
-      echo "Created $2/sys"
+    mkdir -p $2/sys \
+      && echo "Created $2/sys"
   fi
-  mount -t sysfs -o nosuid,noexec,nodev sysfs $2/sys
-  echo "OK"
+  mount -t sysfs -o nosuid,noexec,nodev sysfs $2/sys \
+    && echo "OK"
   
-  echo "Mounting /dev/ and /dev/pts in chroot... "
-  mkdir -p -m 755 $2/dev/pts
-  mount -t devtmpfs -o mode=0755,nosuid devtmpfs $2/dev
-  mount -t devpts -o gid=5,mode=620 devpts $2/dev/pts
+  echo "Mounting /dev/ and /dev/pts in chroot... " \
+    && mkdir -p -m 755 $2/dev/pts \
+    && mount -t devtmpfs -o mode=0755,nosuid devtmpfs $2/dev \
+    && mount -t devpts -o gid=5,mode=620 devpts $2/dev/pts \
+    && echo "OK"
   # mount -t devpts none "$2/dev/pts" -o ptmxmode=0666,newinstance
   # ln -fs "pts/ptmx" "$2/dev/ptmx"
-  echo "OK"
 
   # mount -o bind /dev $2/dev
   # mount -t proc proc $2/proc
@@ -193,8 +193,8 @@ mount_system() {
   # mount -t sysfs sys $2/sys
   # mount --bind /dev $2/dev
 
-  echo -e "\033[0;31m\033[1mCopy DNS records\033[0m\033[0m"
-  cp -L /etc/resolv.conf $2/etc/resolv.conf
+  echo -e "\033[0;31m\033[1mCopy DNS records\033[0m\033[0m" \
+    && cp -L /etc/resolv.conf $2/etc/resolv.conf
 
   # https://wiki.archlinux.org/index.php/Change_root_(%D0%A0%D1%83%D1%81%D1%81%D0%BA%D0%B8%D0%B9)
   # http://www.unix-lab.org/posts/chroot/
@@ -202,8 +202,8 @@ mount_system() {
   # https://losst.ru/vosstanovlenie-grub2
   # http://unixteam.ru/content/virtualizaciya-ili-zapuskaem-prilozhenie-v-chroot-okruzhenii-razmyshleniya
   # http://help.ubuntu.ru/wiki/%D0%B2%D0%BE%D1%81%D1%81%D1%82%D0%B0%D0%BD%D0%BE%D0%B2%D0%BB%D0%B5%D0%BD%D0%B8%D0%B5_grub
-  echo -e "\033[0;31m\033[1mEnter chroot\033[0m\033[0m"
-  chroot $2 /bin/bash
+  echo -e "\033[0;31m\033[1mEnter chroot\033[0m\033[0m" \
+    && chroot $2 /bin/bash
 
   umount_system $2 $DEV_IMAGE
 }
@@ -231,25 +231,25 @@ execute() {
     mkdir -p $2/proc
     echo "Created $2/proc"
   fi
-  mount -t proc -o nosuid,noexec,nodev proc $2/proc
-  echo "OK"
+  mount -t proc -o nosuid,noexec,nodev proc $2/proc \
+    && echo "OK"
 
   echo "Mounting /sys in chroot... "
   if [ ! -d $2/sys ] ; then
     mkdir -p $2/sys
     echo "Created $2/sys"
   fi
-  mount -t sysfs -o nosuid,noexec,nodev sysfs $2/sys
-  echo "OK"
+  mount -t sysfs -o nosuid,noexec,nodev sysfs $2/sys \
+    && echo "OK"
 
-  echo "Mounting /dev/ and /dev/pts in chroot... "
-  mkdir -p -m 755 $2/dev/pts
-  mount -t devtmpfs -o mode=0755,nosuid devtmpfs $2/dev
-  mount -t devpts -o gid=5,mode=620 devpts $2/dev/pts
-  echo "OK"
+  echo "Mounting /dev/ and /dev/pts in chroot... " \
+    && mkdir -p -m 755 $2/dev/pts \
+    && mount -t devtmpfs -o mode=0755,nosuid devtmpfs $2/dev \
+    && mount -t devpts -o gid=5,mode=620 devpts $2/dev/pts \
+    && echo "OK"
 
-  echo -e "\033[0;31m\033[1mCopy DNS records\033[0m\033[0m"
-  cp -L /etc/resolv.conf $2/etc/resolv.conf
+  echo -e "\033[0;31m\033[1mCopy DNS records\033[0m\033[0m" \
+    && cp -L /etc/resolv.conf $2/etc/resolv.conf
 
   echo -e "\033[0;31m\033[1m$(date) | Enter chroot\033[0m\033[0m"
   script_name=$(basename $3)
