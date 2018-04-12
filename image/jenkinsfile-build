@@ -2,7 +2,7 @@ pipeline {
   agent any
   parameters {
     string(name: 'IMAGE_NAME', defaultValue: 'clever_noname.img', description: 'Output image file name')
-    string(name: 'IMAGE_VERSION', defaultValue: 'No version', description: 'Image version')
+    string(name: 'IMAGE_VERSION', defaultValue: '${params.GWBT_RELEASE_TAG_NAME}', description: 'Image version')
 
     string(name: 'BUILD_DIR', defaultValue: '/mnt/hdd_builder/workspace', description: 'Build workspace')
     string(name: 'MOUNT_POINT', defaultValue: '/mnt/hdd_builder/image', description: 'Mount point')
@@ -43,7 +43,7 @@ pipeline {
       }
       // TODO: Transfer apps.sh initialisation code here
       steps {
-        sh "$WORKSPACE/image/image_config.sh execute ${params.BUILD_DIR}/${params.IMAGE_NAME} ${params.MOUNT_POINT} $WORKSPACE/image/$EXECUTE_FILE ${params.IMAGE_VERSION} $(basename ${params.RPI_ZIP_NAME})"
+        sh "$WORKSPACE/image/image_config.sh execute ${params.BUILD_DIR}/${params.IMAGE_NAME} ${params.MOUNT_POINT} $WORKSPACE/image/$EXECUTE_FILE ${params.IMAGE_VERSION} $(basename ${params.RPI_DONWLOAD_URL})"
       }
     }
     stage('Install Apps') {
