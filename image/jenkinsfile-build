@@ -30,26 +30,34 @@ pipeline {
         sh "$WORKSPACE/image/image_config.sh resize_fs $SIZE ${params.BUILD_DIR} ${params.IMAGE_NAME}"
       }
     }
-    stage('Configure interfaces') {
-      environment {
-        EXECUTE_FILE = 'iface.sh'
-      }
-      steps {
-        sh "$WORKSPACE/image/image_config.sh execute ${params.BUILD_DIR}/${params.IMAGE_NAME} ${params.MOUNT_POINT} $WORKSPACE/image/$EXECUTE_FILE"
-      }
-    }
     stage('Initialize image') {
       environment {
-        EXECUTE_FILE = 'init.sh'
+        EXECUTE_FILE = 'scripts/init_image.sh'
       }
       // TODO: Transfer apps.sh initialisation code here
       steps {
         sh "$WORKSPACE/image/image_config.sh execute ${params.BUILD_DIR}/${params.IMAGE_NAME} ${params.MOUNT_POINT} $WORKSPACE/image/$EXECUTE_FILE ${params.IMAGE_VERSION} \$(basename ${params.RPI_DONWLOAD_URL})"
       }
     }
-    stage('Install Apps') {
+    stage('Hardware setup') {
       environment {
-        EXECUTE_FILE = 'apps.sh'
+        EXECUTE_FILE = 'scripts/hardware_setup.sh'
+      }
+      steps {
+        sh "$WORKSPACE/image/image_config.sh execute ${params.BUILD_DIR}/${params.IMAGE_NAME} ${params.MOUNT_POINT} $WORKSPACE/image/$EXECUTE_FILE"
+      }
+    }
+    stage('Software install') {
+      environment {
+        EXECUTE_FILE = 'scripts/software_install.sh'
+      }
+      steps {
+        sh "$WORKSPACE/image/image_config.sh execute ${params.BUILD_DIR}/${params.IMAGE_NAME} ${params.MOUNT_POINT} $WORKSPACE/image/$EXECUTE_FILE"
+      }
+    }
+    stage('Network install') {
+      environment {
+        EXECUTE_FILE = 'scripts/network_setup.sh'
       }
       steps {
         sh "$WORKSPACE/image/image_config.sh execute ${params.BUILD_DIR}/${params.IMAGE_NAME} ${params.MOUNT_POINT} $WORKSPACE/image/$EXECUTE_FILE"
@@ -57,7 +65,7 @@ pipeline {
     }
     stage('Install ROS') {
       environment {
-        EXECUTE_FILE = 'ros.sh'
+        EXECUTE_FILE = 'scripts/ros_install.sh'
       }
       steps {
         sh "$WORKSPACE/image/image_config.sh execute ${params.BUILD_DIR}/${params.IMAGE_NAME} ${params.MOUNT_POINT} $WORKSPACE/image/$EXECUTE_FILE"
